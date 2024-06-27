@@ -3,8 +3,25 @@ This is a public repository for my R packages. These are mainly utility and conv
 
 ## Packages
 
-'describe'
+- **describe/**: Contains the source files for the `describe` package.
+  - `describe.Rproj`: RStudio project file.
+  - `DESCRIPTION`: Metadata about the package.
+  - `NAMESPACE`: Functions and datasets exported by the package.
+  - `R/`: Directory containing R scripts.
+  - `man/`: Directory containing manual files.
 
-'manage' (in development)
+- **manage**
+  - Currently in development
 
-'inference.tests' (in development)
+- **inference.tests**
+  - Currently in development
+
+## Installation
+
+To install a package from this repository, use the following command in R:
+
+```R
+install.packages("<package.name>", repos = "https://brent-hill.github.io/R", type = "source")
+```
+
+Alternatively, you can add this repository (`https://brent-hill.github.io/R`) as a secondary repository in RStudio and use the "Install" button in the Packages tab.
