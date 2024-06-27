@@ -3,18 +3,14 @@ This is a public repository for my R packages. These are mainly utility and conv
 
 ## Packages
 
-- **describe/**: Contains the source files for the `describe` package.
-  - `describe.Rproj`: RStudio project file.
-  - `DESCRIPTION`: Metadata about the package.
-  - `NAMESPACE`: Functions and datasets exported by the package.
-  - `R/`: Directory containing R scripts.
-  - `man/`: Directory containing manual files.
-
-- **manage**
-  - Currently in development
-
-- **inference.tests**
-  - Currently in development
+- **'describe'**
+  - Various descriptive statistics
+- **'manage'**
+  - Data management and manipulation utility functions
+  - _Currently in development_
+- **'inference.tests'**
+  - Convenience wrappers for many classical inferential tests
+  - _Currently in development_
 
 ## Installation
 
