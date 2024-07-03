@@ -5,55 +5,79 @@
 Descriptive Statistics for Numerical Variables
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+This function computes various descriptive statistics for numerical variables. The available statistics are sample size, mean, median, variance, standard deviation, skewness, and kurtosis.
 }
 \usage{
-dsnv(data.frame, ..., by = NULL, stats = "n mean", dec = 2)
+dsnv(..., by = NULL, stats = "mean", dec = 3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{data.frame}{
-	Name of a data frame
-  }
   \item{...}{
-	List of numerical variables (columns) from the data frame (separated by commas)
+	Listing of numerical variables. There are a few different ways to specify the variables:
+	\itemize{
+		\item As a listing of one or more standalone vectors (i.e., autonomous variables not in a data frame)
+		\item As a listing of one or more vectors from a data frame using the \code{$} operator
+		\item A data frame followed by a listing of one or more column names from the data frame
+		\item A data frame with nothing else specified (this implicitly specifies all numeric columns in the data frame)
+	}
   }
   \item{stats}{
-	A character string specifying the descriptive statistics to be computed for each of the numerical variables. Current options are \code{n} (count of non-NA observations), \code{mean}, and \code{sd}. One or more can be specified in this list (must be enclosed in quotation marks).
+	Character string specifying the descriptive statistics to be computed for each of the numerical variables. The options are as follows:
+	\tabular{ll}{
+		\code{n}      \tab Count of non-NA (non-missing) observations \cr
+		\code{mean}   \tab Mean \cr
+		\code{median} \tab Median \cr
+		\code{var}    \tab Variance \cr
+		\code{sd}     \tab Standard deviation \cr
+		\code{skew}   \tab Skewness \cr
+		\code{kurt}   \tab Kurtosis \cr
+	}
+	One or more of these can be specified in this list (must be enclosed in quotation marks).
+
+	==[ NOTE: Presently, it is not possible to request a subset of the descriptive statistics; all of these statistics are computed and reported. ]==
   }
-  \item{by}{Specifies a grouping variable.}
-  \item{dec}{Number of decimal places. ==[not operational yet]==}
-  }
+  \item{by}{Specifies a grouping variable. ==[ not yet operational ]==}
+  \item{dec}{Number of decimal places. ==[ not yet operational ]==}
+}
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+I guess some big-ass matrix of all the descriptive statistics computed.
 }
 \references{
-%% ~put references to the literature/web site here ~
+	\href{https://publish.obsidian.md/omnibus/EDUC+702/(00)+Table+of+Contents}{EDUC 702 Textbook}
 }
 \author{
 Brent Hill
 }
 \note{
-%%  ~~further notes~~
+This function is still being developed and fine-tuned, so not all arguments/features are available.
+
+All the individual statistical functions used for the computations in this function are set to \code{na.rm = TRUE}.
+
+Skewness and kurtosis are computed using functions from the 'moments' package.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{mean}}, \code{\link{sd}}
+	\code{\link{mean}}, \code{\link{median}}, \code{\link{var}}, \code{\link{sd}}, \code{\link{skewness}}, \code{\link{kurtosis}}
 }
 \examples{
-##-- Examples use the built-in dataset -mtcars-.
-dsnv(mtcars, mpg, wt)
-dsnv(mtcars, mpg, wt, stats="n mean sd")
-dsnv(mtcars, mpg, wt, stats="n mean sd", by=cyl)
+## Example with standalone vectors
+## First create some vectors:
+%% vec1 <- c(12, 65, 34, NA, 28, 55, 23)
+%% vec2 <- rnorm(25, 100, 15)
+%% dsnv(vec1, vec2)
+
+## Example with variables from a data frame using the $ operator
+## (This example uses the built-in data frame -mtcars-.)
+%% dsnv(mtcars$mpg, mtcars$wt, mtcars$cyl)
+
+## Example with data frame and list of column names
+%% dsnv(mtcars, mpg, wt, cyl)
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

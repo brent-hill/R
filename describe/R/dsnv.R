@@ -1,121 +1,76 @@
-dsnv <- function(data.frame, ..., by = NULL, stats = "n mean", dec = 2) {
-
-	# Capture the list of names of numeric variables
-	num.vars <- eval(substitute(alist(...)))
-
-	# Convert the list of numeric variables into character vector
-	numvar.names <- sapply(num.vars, deparse)
-
-	# If grouping variable is specified, capture its name as a character string
-	if (!missing(by)) {
-		grouping_var <- deparse(substitute(by))
-	} else {
-		grouping_var <- NULL
+dsnv <-
+function(..., by = NULL, stats = "mean", dec = 3) {
+	# Check if 'rlang' is installed and install it if necessary
+	if(!requireNamespace("rlang", quietly = TRUE)) {
+		install.packages("rlang")
 	}
-
-	# Split the stats spec string into individual components and convert to lowercase
-	stats <- tolower(unlist(strsplit(stats, " ")))
-
-	# Function to compute mean, standard deviation, and sample size
-	compute_stats <- function(x, stats) {
-		mean_value <- mean(x, na.rm = TRUE)
-		sd_value <- sd(x, na.rm = TRUE)
-		n_value <- sum(!is.na(x))
-		result <- c()
-		if ("n" %in% stats) {
-			result <- c(result, n_value)
-		}
-		if ("mean" %in% stats) {
-			result <- c(result, mean_value)
-		}
-		if ("sd" %in% stats) {
-			result <- c(result, sd_value)
-		}
-		return(result)
+	library(rlang)
+	if(!requireNamespace("moments", quietly = TRUE)) {
+		install.packages("moments")
 	}
+	library(moments)
 
-	# Determine the column names based on selected statistics
-	col_names <- c("Levels")
-	if ("n" %in% stats) {
-		col_names <- c(col_names, "n")
-	}
-	if ("mean" %in% stats) {
-		col_names <- c(col_names, "Mean")
-	}
-	if ("sd" %in% stats) {
-		col_names <- c(col_names, "SD")
-	}
+	# Capture the data specification using 'rlang'
+	args <- enquos(...)
 
-	# Prepare output container
-	output <- list()
+	# Function to extract variables and standardize the input format
+	extract_vars <- function(args) {
+		vars <- list()
+		var_names <- c()
+		df_mode <- FALSE
+		df <- NULL
 
-	# Compute statistics
-	for (var in numvar.names) {
-		if (!is.null(grouping_var)) {
-			levels <- as.character(unique(data.frame[[grouping_var]]))
-			var_output <- matrix(nrow = length(levels), ncol = length(col_names))
-			colnames(var_output) <- col_names
-			rownames(var_output) <- levels
-			for (i in seq_along(levels)) {
-				level <- levels[i]
-				subset_data <- data.frame[data.frame[[grouping_var]] == level, var, drop = FALSE]
-				stats_values <- compute_stats(subset_data[[var]], stats)
-				var_output[i, ] <- c(level, stats_values)
-			}
-			output[[var]] <- var_output
-		} else {
-			stats_values <- compute_stats(data.frame[[var]], stats)
-			var_output <- matrix(stats_values, nrow = 1, ncol = length(col_names) - 1)
-			colnames(var_output) <- col_names[-1]
-			rownames(var_output) <- var
-			output[[var]] <- var_output
-		}
-	}
-
-	# Print the results
-	print_output <- function(output, grouping_var, col_names, dec) {
-		if (!is.null(grouping_var)) {
-			for (var in names(output)) {
-				cat(sprintf("%s\n", var))
-				cat(sprintf("%-10s", "Levels"))
-				for (name in col_names[-1]) {
-					cat(sprintf(" %10s", name))
+		for(arg in args) {
+			if(df_mode) {
+				# Treat arg as a column name
+				col_name <- as_label(arg)
+				vars <- c(vars, list(df[[col_name]]))
+				var_names <- c(var_names, col_name)
+			} else {
+				eval_arg <- eval_tidy(arg)
+				if(is.data.frame(eval_arg) && !df_mode) {
+					df <- eval_arg
+					df_mode <- TRUE
+				} else {
+					vars <- c(vars, list(eval_arg))
+					var_names <- c(var_names, as_label(arg))
 				}
-				cat("\n")
-				apply(output[[var]], 1, function(row) {
-					cat(sprintf("%-10s", row[1]))
-					for (j in 2:length(row)) {
-						if (col_names[j] == "n") {
-							cat(sprintf(" %10d", as.integer(row[j])))
-						} else {
-							cat(sprintf(paste0(" %10.", dec, "f"), as.numeric(row[j])))
-						}
-					}
-					cat("\n")
-				})
-				cat("\n")
 			}
-		} else {
-			cat(sprintf("%-15s", "Variable"))
-			for (name in col_names[-1]) {
-				cat(sprintf(" %10s", name))
-			}
-			cat("\n")
-			for (var in names(output)) {
-				row <- output[[var]]
-				cat(sprintf("%-15s", var))
-				for (j in 1:length(row[1, ])) {
-					if (colnames(row)[j] == "n") {
-						cat(sprintf(" %10d", as.integer(row[1, j])))
-					} else {
-						cat(sprintf(paste0(" %10.", dec, "f"), as.numeric(row[1, j])))
-					}
-				}
-				cat("\n")
-			}
-			cat("\n")  # Added extra newline here
 		}
+
+		if(df_mode && length(vars) == 0) {
+			vars <- as.list(df)
+			var_names <- names(df)
+		}
+
+		list(vars = vars, var_names = var_names)
 	}
 
-	print_output(output, grouping_var, col_names, dec)
+	# Function to compute stats
+	compute_stats <- function(vars, var_names) {
+		.N <- sapply(vars, function(x) sum(!is.na(x)))
+		.MEAN <- sapply(vars, function(x) mean(x, na.rm = TRUE))
+		.P50 <- sapply(vars, function(x) median(x, na.rm = TRUE))
+		.VAR <- sapply(vars, function(x) var(x, na.rm = TRUE))
+		.SD <- sapply(vars, function(x) sd(x, na.rm = TRUE))
+		.SKEW <- sapply(vars, function(x) skewness(x, na.rm = TRUE))
+		.KURT <- sapply(vars, function(x) kurtosis(x, na.rm = TRUE))
+		stats_df <- data.frame(Variable = var_names,
+							   n = .N,
+							   Mean = round(.MEAN, 3),
+							   Median = .P50,
+							   Var = round(.VAR, 3),
+							   SD = round(.SD, 3),
+							   Skew = round(.SKEW, 3),
+							   Kurt = round(.KURT, 3))
+		rownames(stats_df) <- NULL
+		stats_df
+	}
+
+	# Process input data specification and pass to computation function
+	input <- extract_vars(args)
+	results <- compute_stats(input$vars, input$var_names)
+
+	return(results)
+	# print(str(results))
 }
