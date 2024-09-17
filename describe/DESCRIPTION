@@ -4,9 +4,10 @@ Title: Descriptive Statistics
 Version: 0.1.3
 Author: Brent Hill
 Maintainer: Brent Hill <brent.hill@ndsu.edu>
-Depends: R (>= 4.1.0), moments, rlang
 Description: This package contains functions for a few basic descriptive statistics for categorical and numerical data.
     This package was originally created for EDUC 702 (Introduction to Statistics in Educational Research) and other quantitative methods courses in the School of Education at North Dakota State University.
+Depends: R (>= 4.1.0), moments, rlang
+Imports: moments, rlang
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

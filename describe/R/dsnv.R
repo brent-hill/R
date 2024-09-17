@@ -1,17 +1,18 @@
 dsnv <-
 function(..., by = NULL, stats = "mean", dec = 3) {
-	# Check if 'rlang' is installed and install it if necessary
-	if(!requireNamespace("rlang", quietly = TRUE)) {
-		install.packages("rlang")
-	}
-	library(rlang)
-	if(!requireNamespace("moments", quietly = TRUE)) {
-		install.packages("moments")
-	}
-	library(moments)
+	# # Check if 'rlang' is installed and install it if necessary
+	# if(!requireNamespace("rlang", quietly = TRUE)) {
+	# 	install.packages("rlang")
+	# }
+	# library(rlang)
+	# # Check if 'moments' is installed and install it if necessary
+	# if(!requireNamespace("moments", quietly = TRUE)) {
+	# 	install.packages("moments")
+	# }
+	# library(moments)
 
 	# Capture the data specification using 'rlang'
-	args <- enquos(...)
+	args <- rlang::enquos(...)
 
 	# Function to extract variables and standardize the input format
 	extract_vars <- function(args) {
@@ -23,17 +24,17 @@ function(..., by = NULL, stats = "mean", dec = 3) {
 		for(arg in args) {
 			if(df_mode) {
 				# Treat arg as a column name
-				col_name <- as_label(arg)
+				col_name <- rlang::as_label(arg)
 				vars <- c(vars, list(df[[col_name]]))
 				var_names <- c(var_names, col_name)
 			} else {
-				eval_arg <- eval_tidy(arg)
+				eval_arg <- rlang::eval_tidy(arg)
 				if(is.data.frame(eval_arg) && !df_mode) {
 					df <- eval_arg
 					df_mode <- TRUE
 				} else {
 					vars <- c(vars, list(eval_arg))
-					var_names <- c(var_names, as_label(arg))
+					var_names <- c(var_names, rlang::as_label(arg))
 				}
 			}
 		}
@@ -48,13 +49,13 @@ function(..., by = NULL, stats = "mean", dec = 3) {
 
 	# Function to compute stats
 	compute_stats <- function(vars, var_names) {
-		.N <- sapply(vars, function(x) sum(!is.na(x)))
+		.N <-    sapply(vars, function(x) sum(!is.na(x)))
 		.MEAN <- sapply(vars, function(x) mean(x, na.rm = TRUE))
-		.P50 <- sapply(vars, function(x) median(x, na.rm = TRUE))
-		.VAR <- sapply(vars, function(x) var(x, na.rm = TRUE))
-		.SD <- sapply(vars, function(x) sd(x, na.rm = TRUE))
-		.SKEW <- sapply(vars, function(x) skewness(x, na.rm = TRUE))
-		.KURT <- sapply(vars, function(x) kurtosis(x, na.rm = TRUE))
+		.P50 <-  sapply(vars, function(x) median(x, na.rm = TRUE))
+		.VAR <-  sapply(vars, function(x) var(x, na.rm = TRUE))
+		.SD <-   sapply(vars, function(x) sd(x, na.rm = TRUE))
+		.SKEW <- sapply(vars, function(x) moments::skewness(x, na.rm = TRUE))
+		.KURT <- sapply(vars, function(x) moments::kurtosis(x, na.rm = TRUE))
 		stats_df <- data.frame(Variable = var_names,
 							   n = .N,
 							   Mean = round(.MEAN, 3),
