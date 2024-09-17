@@ -1,7 +1,7 @@
 Package: describe
 Version: 0.1.3
-Depends: R (>= 4.1.0), moments, rlang
+Depends: R (>= 4.1.0)
 Imports: moments, rlang
 License: GPL-3
-MD5sum: 5c46df0e3eb80a9be5d271a71f538e12
+MD5sum: 64f670432c3ec722a7cfaf3308e34e16
 NeedsCompilation: no

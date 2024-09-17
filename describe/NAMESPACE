@@ -1,5 +1,5 @@
 exportPattern("^[[:alpha:]]+")
 importFrom("stats", "median", "var", "sd", "na.omit")
-importFrom("moments", "skewness", "kurtosis")
 importFrom("utils", "install.packages")
+importFrom("moments", "skewness", "kurtosis")
 importFrom("rlang", "enquos", "as_label", "eval_tidy")
