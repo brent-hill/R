@@ -28,9 +28,6 @@ Logical (\code{TRUE} or \code{FALSE}). If \code{TRUE}, then rf and crf are displ
 	Number of decimal places displayed in the rf and crf results.
   }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
 Returns the frequancy table--i.e., the results of the \code{table()} function.
 %%  ~Describe the value returned
@@ -44,9 +41,6 @@ Freund & Wilson (20??)
 }
 \author{
 Brent Hill
-}
-\note{
-%%  ~~further notes~~
 }
 
 \seealso{

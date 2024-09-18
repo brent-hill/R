@@ -39,9 +39,6 @@ dsnv(..., by = NULL, stats = "mean", dec = 3)
   \item{by}{Specifies a grouping variable. ==[ not yet operational ]==}
   \item{dec}{Number of decimal places. ==[ not yet operational ]==}
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
 I guess some big-ass matrix of all the descriptive statistics computed.
 }

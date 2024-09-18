@@ -22,21 +22,8 @@ obs(data.obj, sepNA = FALSE)
 \details{
 If a data frame is specified without referencing a specific variable, and \code{sepNA = TRUE}, then results will be shown for each variable in the data frame.
 }
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Brent Hill
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
